@@ -13,7 +13,7 @@ export default Ember.Object.extend({
 	update: function(){
 		var board = this.get('board');
 		Ember.$('#game tr').each(function(x, el){
-			Ember.$('td', el).each(function(i, td){
+			Ember.$('td', el).each(function(i){
 				var pos = Number(i);
 				if(x == 1) pos = (pos+3);
 				if(x == 2) pos = (pos+6);
