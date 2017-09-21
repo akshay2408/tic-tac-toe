@@ -1,0 +1,37 @@
+<div id="game-container">
+	<div class="bg-cyan mdl-shadow--2dp">
+		<div class="mdl-grid">
+			<div class="mdl-cell mdl-cell--12-col">
+				<h2 class="title">Tic Tac Toe </h2>
+			</div>
+			<div class="mdl-cell mdl-cell--9-col line-height-70">
+				{{#if status}}<span class="status">{{status}}</span>{{/if}}
+				&nbsp;&nbsp;&nbsp;
+				{{#if newMatchBtnShow}}
+					<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" {{ action 'newMatch'}}>
+					New Partner
+					</button>
+				{{/if}}
+
+				{{#if restartBtnShow}}
+					<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" {{ action 'restartGame'}}>
+					Restart
+					</button>
+				{{/if}}
+			</div>
+			<div class="mdl-cell mdl-cell--3-col">
+				<p>Player X score : <span class="mdl-badge" data-badge="{{score.X}}"></span></p>
+				<p>Player O score : <span class="mdl-badge" data-badge="{{score.O}}"></span></p>
+			</div>
+		</div>
+	</div>
+	<table id="game" class="ember-view game"  cellpadding="0" cellspacing="0">
+	{{#each items as |item|}}
+		<tr>
+			<td class="animated bounce" {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 0 target=gameService}}></td>
+			<td {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 1 target=gameService}}></td>
+			<td {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 2 target=gameService}}></td>
+		</tr>
+	{{/each}}
+	</table>
+</div>
