@@ -113,7 +113,7 @@ export default Ember.Service.extend({
 		}
 		this.set('status','Player '+ Player.symbol +' Wins!');
 		Ember.set(this.get('score'), Player.symbol, this.get('score')[Player.symbol]+1)
-		Ember.$('td.'+Player.symbol, Ember.$('#game-container')).addClass('animated bounce');
+		Ember.$('td.'+Player.symbol, Ember.$('#game-container')).addClass('animated rubberBand');
 		this.set('restartBtnShow',true);
 		this.set('over',true);
 	},
