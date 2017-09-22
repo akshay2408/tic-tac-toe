@@ -26,6 +26,7 @@ export default Ember.Service.extend({
 
 	start(){
 		this.init();
+		Ember.$('#game tr td').attr('class', '');
 		this.getTurn();
 		this.get('players').pushObject({_id: 0,symbol:"X",computer:false,moves:[]});
 		this.get('players').pushObject({_id: 1, symbol: "O",computer:false,moves:[]});

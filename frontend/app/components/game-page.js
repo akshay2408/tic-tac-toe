@@ -12,14 +12,16 @@ export default Ember.Component.extend({
 	isAnimation: Ember.computed.alias('gameService.isAnimation'),
 
 	setupConsumer: Ember.on('init', function() {
+		var action = null;
 		var consumer = this.get('cableService').createConsumer('ws://localhost:3000/cable');
 		var self = this;
 		var subscription = consumer.subscriptions.create("GameChannel", {
 			connected() {
+				if(!action)
 				self.set('status','Waiting for an other player');
 			},
 			received(data) {
-				var action = data.action;
+				action = data.action;
 				switch(action) {
 					case 'game_start':
 						self.set('status','Player found.');
