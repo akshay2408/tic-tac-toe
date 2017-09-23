@@ -9,9 +9,7 @@ class Match < ApplicationRecord
   def self.add(id)
     last_match = self.active.where(opponent_id: nil).first
     if last_match.present?
-      # Get the uuid of the player waiting
-      last_match.opponent_id = id
-      last_match.save
+      last_match.update_column :opponent_id, id
       Game.start last_match
     else
       self.create user_id: id
