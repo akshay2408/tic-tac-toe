@@ -1,9 +1,11 @@
 <table id="game" class="ember-view game"  cellpadding="0" cellspacing="0">
-  {{#each items as |item|}}
+  {{#each itemLoop as |index|}}
     <tr>
-      <td {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 0 target=gameService}}></td>
-      <td {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 1 target=gameService}}></td>
-      <td {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 2 target=gameService}}></td>
+      <td class="{{get (get-at-index items index) 'cls'}}" {{action "getHovered" (get-at-index items index) on="mouseEnter" target=gameService}} {{action "getHovered" (get-at-index items index) on="mouseLeave" target=gameService}} {{action "getMarked" (get-at-index items index) target=gameService}}>{{get (get-at-index items index) 'symbol'}}</td>
+      <td class="{{get (get-at-index items (inc index 1)) 'cls'}}" {{action "getHovered" (get-at-index items (inc index 1)) on="mouseEnter" target=gameService}} {{action "getHovered" (get-at-index items (inc index 1)) on="mouseLeave" target=gameService}} {{action "getMarked" (get-at-index items (inc index 1)) target=gameService}}>{{get (get-at-index items (inc index 1)) 'symbol'}}</td>
+      <td class="{{get (get-at-index items (inc index 2)) 'cls'}}" {{action "getHovered" (get-at-index items (inc index 2)) on="mouseEnter" target=gameService}} {{action "getHovered" (get-at-index items (inc index 2)) on="mouseLeave" target=gameService}} {{action "getMarked" (get-at-index items (inc index 2)) target=gameService}}>{{get (get-at-index items (inc index 2)) 'symbol'}}</td>
     </tr>
   {{/each}}
 </table>
+
+

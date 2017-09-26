@@ -7,8 +7,9 @@ export default Ember.Component.extend({
   subscription: Ember.computed.alias('gameService.subscription'),
   newMatchBtnShow: Ember.computed.alias('gameService.newMatchBtnShow'),
   restartBtnShow: Ember.computed.alias('gameService.restartBtnShow'),
-  items: [0,1,2],
+  items: Ember.computed.alias('gameService.items'),
   score: Ember.computed.alias('gameService.score'),
+  
   setupConsumer: Ember.on('init', function() {
     let action = null;
     let consumer = this.get('cableService').createConsumer('ws://localhost:3000/cable');
@@ -26,7 +27,8 @@ export default Ember.Component.extend({
             self.get('gameService').setPType(data.msg);
             break;
           case 'take_turn':
-            self.get('gameService').move(data.move);
+            let item = self.get('items').find(itm => data.item.row === itm.row && data.item.col === itm.col);
+            self.get('gameService').move(data.move, item);
             self.get('gameService').getTurn();
             break;
           case 'new_game':
