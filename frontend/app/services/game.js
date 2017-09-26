@@ -69,7 +69,7 @@ export default Ember.Service.extend({
     
   clearHoverClass(item) {
     let self = this;
-    this.get('items').forEach(function(itm) {
+    this.get('items').forEach((itm) => {
       if(item != itm) {
         let cls = itm.cls.replace(' hover-'+ self.activePlayer, '');
         Ember.set(itm, 'cls', cls);
@@ -78,39 +78,38 @@ export default Ember.Service.extend({
   },
   
   move(item){
-    let self = this;
-    let Player = self.get('players')[ self.get('activePlayer') ];
+    let Player = this.get('players')[ this.get('activePlayer') ];
     let pos = Number(item.col);
     if(item.row == 1) pos = (pos+3);
     if(item.row == 2) pos = (pos+6);
     if(item.symbol != '') return false;
     Player.moves.pushObject( pos );
-    let moves = self.get('moves');
+    let moves = this.get('moves');
     moves = ++moves;
-    self.set('moves',moves);
+    this.set('moves',moves);
     Ember.set(item, 'symbol', Player.symbol);
-    self.set('activePlayer', (Player._id) ? 0 : 1); // inverse of Player._id
-    self.getTurn();
-    self.get('board').update(item, Player.symbol);
+    this.set('activePlayer', (Player._id) ? 0 : 1); // inverse of Player._id
+    this.getTurn();
+    this.get('board').update(item, Player.symbol);
     // a player has won!
     let won = false;
     let wins = Player.moves.join(' ');
-    self.get('board').wins.forEach(function(n){
+    this.get('board').wins.forEach((n) => {
       if(wins.includes(n[0]) && wins.includes(n[1]) && wins.includes(n[2])){
         won = true;
-        self.set('_winPiece',n);
+        this.set('_winPiece',n);
         return true;
       }
     });
 
     if(won){
-      self.get('subscription').perform('final_result',{data:Player.symbol});
-      self.gameOver(Player);
+      this.get('subscription').perform('final_result',{data:Player.symbol});
+      this.gameOver(Player);
       return true;
     }
 
     //draw!
-    if(self.get('moves') >= 9) self.gameOver(null)
+    if(this.get('moves') >= 9) this.gameOver(null)
 
     return true;
   },
