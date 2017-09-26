@@ -1,9 +1,9 @@
 <table id="game" class="ember-view game"  cellpadding="0" cellspacing="0">
   {{#each items as |item|}}
     <tr>
-      <td class="{{moveClass}} {{animateClass}}" {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 0 target=gameService}}></td>
-      <td class="{{moveClass}} {{animateClass}}" {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 1 target=gameService}}></td>
-      <td class="{{moveClass}} {{animateClass}}" {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 2 target=gameService}}></td>
+      <td {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 0 target=gameService}}></td>
+      <td {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 1 target=gameService}}></td>
+      <td {{action "getHovered" on="mouseEnter" target=gameService}} {{action "getHovered" on="mouseLeave" target=gameService}} {{action "getMarked" item 2 target=gameService}}></td>
     </tr>
   {{/each}}
 </table>

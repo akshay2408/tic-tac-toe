@@ -28,14 +28,11 @@ class Game
     return unless match
     
     if status['data'] == 'draw'
-      match.update_column :total_draw, match.total_draw + 1 
+      match.update_score 'total_draw'
     else
       column = status['data'] == match.symbol ? :total_win : :total_loss
-      match.update_column column, match[column] + 1
+      match.update_score column
     end
-      
-    ActionCable.server.broadcast "player_#{match.user_id}", {action: 'total_win', score: match.total_win, symbol: match.symbol}
-    ActionCable.server.broadcast "player_#{match.opponent_id}", {action: 'total_win', score: match.total_loss, symbol: match.symbol == 'X' ? 'O' : 'X'}
   end
   
   private
@@ -45,20 +42,19 @@ class Game
     
     return unless match
     
-    match.update_column :active, false if action == 'opponent_withdraw'
+    match.update_attributes active: false if action == 'opponent_withdraw'
     
     if match.user_id == id
       ActionCable.server.broadcast "player_#{match.opponent_id}", {action: action, move: move}
-      if action == 'opponent_withdraw'
-        match.update_column :total_loss, match.total_loss + 1
-        ActionCable.server.broadcast "player_#{match.opponent_id}", {action: 'total_win', score: match.total_loss, symbol: match.symbol == 'X' ? 'O' : 'X'}
-      end 
+      match.update_score 'total_loss' if action == 'opponent_withdraw'
     elsif match.opponent_id == id
       ActionCable.server.broadcast "player_#{match.user_id}", {action: action, move: move}
-      if action == 'opponent_withdraw'
-        match.update_column :total_win, match.total_win + 1
-        ActionCable.server.broadcast "player_#{match.user_id}", {action: 'total_win', score: match.total_win, symbol: match.symbol}
-      end
+      match.update_score 'total_win' if action == 'opponent_withdraw'
     end
+  end
+  
+  def self.broadcast_score match
+    ActionCable.server.broadcast "player_#{match.user_id}", {action: 'total_win', score: match.total_win, symbol: match.symbol}
+    ActionCable.server.broadcast "player_#{match.opponent_id}", {action: 'total_win', score: match.total_loss, symbol: match.symbol == 'X' ? 'O' : 'X'}
   end
 end

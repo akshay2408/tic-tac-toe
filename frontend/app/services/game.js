@@ -9,8 +9,6 @@ export default Ember.Service.extend({
   restartBtnShow: false,
   subscription: null,
   score: {'X': 0, 'O': 0},
-  moveClass: null,
-  
   init(){
     this.over = false,
     this.moves = 0,
@@ -18,7 +16,7 @@ export default Ember.Service.extend({
     this.players = Ember.A(),
     this.activePlayer = 0, // current active player (index of this.players)
     this.playerType = null,
-    this.board = Board.create({board: ['_','_','_','_','_','_','_','_','_']});
+    this.board = Board.create({board: ['','','','','','','','','']});
   },
 
   setPType(pType){
@@ -30,8 +28,8 @@ export default Ember.Service.extend({
     this.init();
     Ember.$('#game tr td').attr('class', '');
     this.getTurn();
-    this.get('players').pushObject(Player.create({_id: 0,symbol:"X", computer: false, moves:[]}));
-    this.get('players').pushObject(Player.create({_id: 1, symbol: "O", computer: false, moves:[]}));
+    this.get('players').pushObject(Player.create({_id: 0,symbol:"X",moves:[]}));
+    this.get('players').pushObject(Player.create({_id: 1, symbol: "O",moves:[]}));
     this.get('board').update();
   },
 
@@ -47,7 +45,7 @@ export default Ember.Service.extend({
   getMarked(row,col){
     if(this.get('over')) return;
     if(this.get('activePlayer') !== this.get('currentPlayer')) return;
-    var move = row +' '+ col;
+    let move = row +' '+ col;
     this.get('subscription').perform('take_turn', {data:move});
     this.move(move);
   },
@@ -55,17 +53,18 @@ export default Ember.Service.extend({
   getHovered() {
     if(this.get('activePlayer') !== this.get('currentPlayer')) return;
     if(this.get('over')) return;
-    if(event.type == 'mouseover')
-      Ember.$(event.target).addClass('hover-'+ this.activePlayer);
-    else
-      Ember.$(event.target).removeClass('hover-0 hover-1');
+    if(event.type == 'mouseover'){
+      event.target.classList.add('hover-'+ this.activePlayer);
+    }else{
+      event.target.classList.remove('hover-'+ this.activePlayer);
+    }
   },
     
   move(move){
-    var self = this;
-    var Player = self.get('players')[ self.get('activePlayer') ];
-    var v = move.split(' ');
-    var pos = Number(v[1]);
+    let self = this;
+    let Player = self.get('players')[ self.get('activePlayer') ];
+    let v = move.split(' ');
+    let pos = Number(v[1]);
     if(v[0] == 1) pos = (pos+3);
     if(v[0] == 2) pos = (pos+6);
     move = {
@@ -73,19 +72,18 @@ export default Ember.Service.extend({
       col: v[1],
       index: pos
     };
-    if(self.get('board').board[move.index] != '_') return false;
+    if(self.get('board').board[move.index] != '') return false;
     Player.moves.pushObject( move.index );
-    var moves = self.get('moves');
+    let moves = self.get('moves');
     moves = ++moves;
     self.set('moves',moves);
     self.get('board').board[move.index] = Player.symbol;
     self.set('activePlayer', (Player._id) ? 0 : 1); // inverse of Player._id
     self.getTurn();
     self.get('board').update();
-
     // a player has won!
-    var won = false;
-    var wins = Player.moves.join(' ');
+    let won = false;
+    let wins = Player.moves.join(' ');
     self.get('board').wins.forEach(function(n){
       if(wins.includes(n[0]) && wins.includes(n[1]) && wins.includes(n[2])){
         won = true;

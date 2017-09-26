@@ -9,12 +9,11 @@ export default Ember.Component.extend({
   restartBtnShow: Ember.computed.alias('gameService.restartBtnShow'),
   items: [0,1,2],
   score: Ember.computed.alias('gameService.score'),
-
   setupConsumer: Ember.on('init', function() {
-    var action = null;
-    var consumer = this.get('cableService').createConsumer('ws://localhost:3000/cable');
-    var self = this;
-    var subscription = consumer.subscriptions.create("GameChannel", {
+    let action = null;
+    let consumer = this.get('cableService').createConsumer('ws://localhost:3000/cable');
+    let self = this;
+    const subscription = consumer.subscriptions.create("GameChannel", {
       connected() {
         if(!action)
         self.set('status','Waiting for an other player');
@@ -41,7 +40,6 @@ export default Ember.Component.extend({
             self.set('newMatchBtnShow',true);
             break;
         }
-
       },
       disconnected() {
         Ember.debug("GameChannel#disconnected");
