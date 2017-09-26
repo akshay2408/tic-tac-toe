@@ -16,7 +16,7 @@ export default Ember.Service.extend({
     this.players = Ember.A(),
     this.activePlayer = 0, // current active player (index of this.players)
     this.playerType = null,
-    this.board = Board.create({board: ['','','','','','','','','']});    
+    this.board = Board.create();    
     this.set('items', [
           {row: 0, col: 0, cls: '', symbol: ''}, {row: 0, col: 1, cls: '', symbol: ''},{row: 0, col: 2, cls: '', symbol: ''},
           {row: 1, col: 0, cls: '', symbol: ''}, {row: 1, col: 1, cls: '', symbol: ''}, {row: 1, col: 2, cls: '', symbol: ''}, 
@@ -24,7 +24,7 @@ export default Ember.Service.extend({
   },
 
   setPType(pType){
-    this.set('currentPlayer',(pType == 'cross') ? 0 : 1);
+    this.set('currentPlayer', (pType == 'cross') ? 0 : 1);
     this.start();
   },
 
@@ -40,9 +40,9 @@ export default Ember.Service.extend({
   getTurn(){
     if(this.get('over')) return;
     if(this.get('activePlayer') === this.get('currentPlayer')) {
-      this.set('status','Your turn');
+      this.set('status', 'Your turn');
     } else {
-      this.set('status','Opponent\'s turn');
+      this.set('status', 'Opponent\'s turn');
     }
   },
 
@@ -50,20 +50,19 @@ export default Ember.Service.extend({
     if(this.get('over')) return;
     if(this.get('activePlayer') !== this.get('currentPlayer')) return;
     this.clearHoverClass(item);
-    let move = item.row +' '+ item.col;
-    this.get('subscription').perform('take_turn', { move: move, item: item });
-    this.move(move, item);
+    this.get('subscription').perform('take_turn', {item: item });
+    this.move(item);
   },
 
   getHovered(item) {
     if(this.get('activePlayer') !== this.get('currentPlayer')) return;
     if(this.get('over')) return;
     if(event.type == 'mouseover'){
-      let cls = item.cls.concat('hover-'+ this.activePlayer);
+      let cls = item.cls.concat(' hover-'+ this.activePlayer);
       this.clearHoverClass(item);
       Ember.set(item, 'cls', cls);
     }else{
-      let cls = item.cls.replace('hover-'+ this.activePlayer, '');
+      let cls = item.cls.replace(' hover-'+ this.activePlayer, '');
       Ember.set(item, 'cls', cls);
     }
   },
@@ -72,30 +71,24 @@ export default Ember.Service.extend({
     let self = this;
     this.get('items').forEach(function(itm) {
       if(item != itm) {
-        let cls = itm.cls.replace('hover-'+ self.activePlayer, '');
+        let cls = itm.cls.replace(' hover-'+ self.activePlayer, '');
         Ember.set(itm, 'cls', cls);
       }
     });
   },
   
-  move(move, item){
+  move(item){
     let self = this;
     let Player = self.get('players')[ self.get('activePlayer') ];
-    let v = move.split(' ');
-    let pos = Number(v[1]);
-    if(v[0] == 1) pos = (pos+3);
-    if(v[0] == 2) pos = (pos+6);
-    move = {
-      row: v[0],
-      col: v[1],
-      index: pos
-    };
-    if(self.get('board').board[move.index] != '') return false;
-    Player.moves.pushObject( move.index );
+    let pos = Number(item.col);
+    if(item.row == 1) pos = (pos+3);
+    if(item.row == 2) pos = (pos+6);
+    if(item.symbol != '') return false;
+    Player.moves.pushObject( pos );
     let moves = self.get('moves');
     moves = ++moves;
     self.set('moves',moves);
-    self.get('board').board[move.index] = Player.symbol;
+    Ember.set(item, 'symbol', Player.symbol);
     self.set('activePlayer', (Player._id) ? 0 : 1); // inverse of Player._id
     self.getTurn();
     self.get('board').update(item, Player.symbol);
@@ -126,19 +119,20 @@ export default Ember.Service.extend({
     if (!Player) {
       this.get('subscription').perform('final_result',{data:'draw'});
       this.get('items').forEach((item) => Ember.set(item, 'cls', item.cls.concat(' animated swing'))); 
-      this.set('restartBtnShow',true);
-      this.set('status','It\'s a Draw!');
+      this.set('restartBtnShow', true);
+      this.set('over', true);
+      this.set('status', 'It\'s a Draw!');
       return true;
     }
-    this.set('status','Player '+ Player.symbol +' Wins!');
+    this.set('status', 'Player '+ Player.symbol +' Wins!');
     Ember.set(this.get('score'), Player.symbol, this.get('score')[Player.symbol]+1)
     
     this.get('items').forEach((item) => {
       if(item.symbol === Player.symbol)
         Ember.set(item, 'cls', item.cls.concat(' animated rubberBand'));
     }); 
-    this.set('restartBtnShow',true);
-    this.set('over',true);
+    this.set('restartBtnShow', true);
+    this.set('over', true);
   },
 
   setScore(data) {

@@ -16,7 +16,7 @@ class Game
   end
 
   def self.take_turn id, data
-    broadcast_according_player id, 'take_turn', data['move'], data['item']
+    broadcast_according_player id, 'take_turn', data['item']
   end
 
   def self.new_game id
@@ -37,7 +37,7 @@ class Game
   
   private
   
-  def self.broadcast_according_player id, action, move = nil, item = nil
+  def self.broadcast_according_player id, action, item = nil
     match = Match.active.by_user(id).first
     
     return unless match
@@ -45,10 +45,10 @@ class Game
     match.update_attributes active: false if action == 'opponent_withdraw'
     
     if match.user_id == id
-      ActionCable.server.broadcast "player_#{match.opponent_id}", {action: action, move: move, item: item}
+      ActionCable.server.broadcast "player_#{match.opponent_id}", {action: action, item: item}
       match.update_score 'total_loss' if action == 'opponent_withdraw'
     elsif match.opponent_id == id
-      ActionCable.server.broadcast "player_#{match.user_id}", {action: action, move: move, item: item}
+      ActionCable.server.broadcast "player_#{match.user_id}", {action: action, item: item}
       match.update_score 'total_win' if action == 'opponent_withdraw'
     end
   end

@@ -28,7 +28,7 @@ export default Ember.Component.extend({
             break;
           case 'take_turn':
             let item = self.get('items').find(itm => data.item.row === itm.row && data.item.col === itm.col);
-            self.get('gameService').move(data.move, item);
+            self.get('gameService').move(item);
             self.get('gameService').getTurn();
             break;
           case 'new_game':
@@ -40,6 +40,7 @@ export default Ember.Component.extend({
           case "opponent_withdraw":
             self.set('status','Opponent withdraw, You win!');
             self.set('newMatchBtnShow',true);
+            self.set('restartBtnShow',false);
             break;
         }
       },
